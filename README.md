@@ -1,264 +1,247 @@
-# PPTX Skill - 完整的 PowerPoint 模板系统
+# 📽️ PPTX Expert - Enterprise PowerPoint Skill
 
-📽️ 创建、编辑和管理 PowerPoint 演示文稿，支持完整的模板系统。
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/141319co/ppt-expert/releases)
 
-## ✨ 功能特性
+专业的 PowerPoint 自动化技能，支持完整的模板系统、智能布局推荐和企业级设计预设。
 
-### 模板系统
+🌐 **API 服务**: 可作为 Custom GPT Actions 使用  
+📖 **文档**: [Custom GPT 集成指南](CUSTOM_GPT_INTEGRATION.md)
 
-- ✅ **保存模板** - 从任意 PPTX 创建可复用模板
-- ✅ **提取设计** - 自动提取颜色、字体、布局、Logo
-- ✅ **模板列表** - 查看所有可用模板
-- ✅ **模板选择** - 交互式或命令行选择模板
-- ✅ **应用模板** - 使用模板创建新演示文稿
+## ✨ 核心功能
 
-### 支持的设计元素
+### 🎨 模板系统
+- **保存模板** - 从任意 PPTX 创建可复用模板
+- **智能提取** - 自动提取颜色、字体、布局、Logo
+- **模板管理** - 列表、查看、删除模板
+- **一键应用** - 使用模板快速创建新演示文稿
 
-| 元素 | 支持 | 说明 |
-|------|------|------|
-| 背景色 | ✅ | 从 Master 幻灯片提取和应用 |
-| 主题颜色 | ✅ | accent1-6 完整颜色方案 |
-| 字体配置 | ✅ | 标题/正文字体自动匹配 |
-| Layout 布局 | ✅ | 11 种标准布局支持 |
-| Logo 图片 | ✅ | 自动检测并应用到幻灯片 |
-| Master 背景 | ✅ | 完整复制 Master 样式 |
+### 🤖 AI 增强
+- **内容质量检查** - 自动检测内容问题并给出建议
+- **智能布局推荐** - 根据内容类型推荐最佳布局
+- **内容优化** - 自动优化文字长度和格式
 
----
+### 🌐 API 服务 (Custom GPT)
+- **RESTful API** - FastAPI 构建
+- **OpenAPI 规范** - 完整的 API 文档
+- **Custom GPT Actions** - 可直接集成到 ChatGPT
+- **Docker 支持** - 一键部署
 
 ## 🚀 快速开始
 
-### 1. 保存你的第一个模板
+### 方式 1: 命令行使用
 
 ```bash
-cd /root/.openclaw/skills/pptx/scripts
+# 安装依赖
+pip install -r requirements.txt
 
-# 从现有 PPTX 创建模板
-python3 template_manager.py save /path/to/your/company.pptx \
-  --name "公司品牌" \
-  --description "官方品牌模板，包含 Logo 和标准配色"
-```
-
-### 2. 查看可用模板
-
-```bash
-# 列出所有模板
-python3 template_manager.py list
-
-# 或
-python3 create_pptx.py --list-templates
-```
-
-### 3. 使用模板创建演示文稿
-
-```bash
-# 从 Markdown 大纲
-python3 create_pptx.py --outline outline.md \
-  --template "公司品牌" \
-  --output presentation.pptx
-
-# 从主题自动生成
-python3 create_pptx.py --topic "2026 产品发布" \
-  --slides 10 \
-  --template "公司品牌" \
-  --output launch.pptx
-```
-
----
-
-## 📁 目录结构
-
-```
-pptx/
-├── SKILL.md              # 技能文档
-├── README.md             # 本文件
-├── editing.md            # 编辑指南
-├── pptxgenjs.md          # PptxGenJS 教程
-├── templates/            # 模板存储目录
-│   ├── corporate.json    # 模板元数据
-│   ├── corporate.pptx    # 模板源文件
-│   ├── corporate_logo.png # 提取的 Logo
-│   └── assets/           # 其他资源
-└── scripts/
-    ├── create_pptx.py       # 创建演示文稿
-    ├── template_manager.py  # 模板管理
-    ├── analyze_template.py  # 模板分析
-    ├── interactive_select.py # 交互式选择
-    ├── thumbnail.py         # 缩略图生成
-    ├── add_slide.py         # 添加幻灯片
-    ├── clean.py             # 清理
-    └── office/
-        ├── unpack.py        # 解包 PPTX
-        ├── pack.py          # 打包 PPTX
-        ├── soffice.py       # LibreOffice 转换
-        └── validate.py      # 验证
-```
-
----
-
-## 📖 详细用法
-
-### 模板管理
-
-```bash
 # 保存模板
-python3 template_manager.py save input.pptx -n "模板名" -d "描述"
+python scripts/template_manager.py save company.pptx -n "公司品牌"
 
-# 列出模板
-python3 template_manager.py list
-
-# 查看模板详情
-python3 template_manager.py get <template_id>
-
-# 获取模板文件路径
-python3 template_manager.py path <template_id>
-
-# 删除模板
-python3 template_manager.py delete <template_id>
-```
-
-### 创建演示文稿
-
-```bash
-# 从 Markdown 大纲
-python3 create_pptx.py --outline outline.md -o output.pptx
-
-# 使用模板
-python3 create_pptx.py --outline outline.md -t "公司品牌" -o output.pptx
+# 创建演示文稿
+python scripts/create_pptx.py --outline outline.md -t "公司品牌" -o output.pptx
 
 # 从主题生成
-python3 create_pptx.py --topic "AI 发展趋势" --slides 8 -o ai.pptx
-
-# 从 JSON 结构
-python3 create_pptx.py --json slides.json -o output.pptx
-
-# 列出可用模板
-python3 create_pptx.py --list-templates
+python scripts/create_pptx.py --topic "AI 发展趋势" --slides 8 -o ai.pptx
 ```
 
-### 分析模板
+### 方式 2: API 服务
 
 ```bash
-# 分析 PPTX 提取模板信息
-python3 analyze_template.py template.pptx -o info.json
+# 启动 API 服务
+cd api
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 8000
 
-# JSON 输出
-python3 analyze_template.py template.pptx --json
-
-# 人类可读格式
-python3 analyze_template.py template.pptx
+# 访问 API 文档
+# http://localhost:8000/docs
 ```
 
-### 交互式选择
+### 方式 3: Custom GPT
 
+1. 创建 Custom GPT
+2. 导入 `api/openapi.json` 作为 Actions
+3. 配置 API 认证
+4. 上传文档到知识库
+
+详见 [Custom GPT 集成指南](CUSTOM_GPT_INTEGRATION.md)
+
+## 📖 详细文档
+
+| 文档 | 描述 |
+|------|------|
+| [README.md](README.md) | 使用文档 |
+| [CUSTOM_GPT_INTEGRATION.md](CUSTOM_GPT_INTEGRATION.md) | Custom GPT 集成指南 |
+| [GITHUB_README.md](GITHUB_README.md) | GitHub 项目说明 |
+| [GITHUB_RELEASE.md](GITHUB_RELEASE.md) | Release 说明 |
+| [SKILL.md](SKILL.md) | OpenClaw 技能文档 |
+
+## 📡 API 端点
+
+### 创建演示文稿
 ```bash
-# 交互模式
-python3 interactive_select.py
-
-# 快速选择
-python3 interactive_select.py --select "公司"
-
-# 仅列出
-python3 interactive_select.py --list
-
-# JSON 输出
-python3 interactive_select.py --list --json
+POST /presentations/create
 ```
 
-### 编辑现有 PPT
-
-```bash
-# 1. 分析
-python3 thumbnail.py template.pptx
-python3 -m markitdown template.pptx
-
-# 2. 解包
-python3 office/unpack.py template.pptx unpacked/
-
-# 3. 编辑 slides/slide{N}.xml
-
-# 4. 清理并打包
-python3 clean.py unpacked/
-python3 office/pack.py unpacked/ output.pptx --original template.pptx
-```
-
----
-
-## 📝 Markdown 大纲格式
-
-```markdown
-# 演示文稿标题
-subtitle: 2026 年度回顾
-author: 你的名字
-
-## 简介
-- 欢迎和议程
-- 今天的主要目标
-
-## 市场分析
-- 市场同比增长 15%
-- 竞争地位强劲
-
-## 财务摘要
-- Q4 表现强劲
-- 收入目标超额完成
-```
-
----
-
-## 🎨 模板 JSON 结构
-
+**请求示例**
 ```json
 {
-  "id": "corporate",
-  "name": "公司品牌",
-  "description": "官方品牌模板",
-  "slide_count": 10,
-  "layout_count": 8,
-  "theme_colors": {
-    "accent1": "003366",
-    "accent2": "006699",
-    "bg1": "FFFFFF"
-  },
-  "theme_fonts": {
-    "heading": "Arial",
-    "body": "Calibri"
-  },
-  "sample_colors": {
-    "most_used": ["003366", "FFFFFF", "006699"]
-  },
-  "logo_file": "assets/corporate_logo.png",
-  "masters": [...],
-  "layouts": [...]
+  "title": "AI 发展趋势",
+  "topic": "AI 发展趋势",
+  "slides": 8,
+  "template_id": "corporate"
 }
 ```
 
----
+**响应**
+```json
+{
+  "success": true,
+  "file": "ai_trends.pptx",
+  "slides": 8,
+  "download_url": "/presentations/download/ai_trends.pptx"
+}
+```
 
-## 🔧 常见问题
+### 其他端点
 
-### Q: 如何保存带 Logo 的模板？
-A: 确保 Logo 在 Master 幻灯片上，保存时会自动提取。
+| 端点 | 方法 | 功能 |
+|------|------|------|
+| `/presentations/create` | POST | 创建 PPT |
+| `/templates/list` | GET | 列出模板 |
+| `/content/quality-check` | POST | 质量检查 |
+| `/content/recommend-layout` | POST | 布局推荐 |
+| `/design/presets` | GET | 设计预设 |
+| `/docs` | GET | API 文档 |
 
-### Q: 模板保存在哪里？
-A: `~/.openclaw/skills/pptx/templates/`
+## 🎨 设计预设
 
-### Q: 如何分享模板？
-A: 复制 `templates/` 目录下的 `.json` 和 `.pptx` 文件。
+内置 6 种专业配色方案：
 
-### Q: 支持哪些布局？
-A: 支持 11 种标准布局：Title、Title and Content、Section Header、Two Content、Comparison、Title Only、Blank、Content with Caption、Picture with Caption、Vertical Title、Vertical Text。
+| 预设 | 描述 | 适用场景 |
+|------|------|---------|
+| `corporate_blue` | 专业蓝色 | 企业汇报 |
+| `modern_tech` | 现代科技 | 科技公司 |
+| `executive_gold` | 优雅金色 | 高管会议 |
+| `healthcare_green` | 医疗绿色 | 医疗健康 |
+| `startup_purple` | 活力紫色 | 初创公司 |
+| `minimal_dark` | 极简深色 | 技术分享 |
 
----
+## 📁 项目结构
 
-## 📦 依赖
+```
+ppt-expert/
+├── api/                        # API 服务 (Custom GPT)
+│   ├── main.py                # FastAPI 主服务
+│   ├── openapi.json           # OpenAPI 规范
+│   ├── requirements.txt       # API 依赖
+│   └── Dockerfile             # Docker 部署
+├── custom_gpt/                 # Custom GPT 配置
+│   ├── PPTX_Expert_GPT_Instructions.md
+│   └── DEPLOYMENT.md
+├── scripts/                    # 核心脚本
+│   ├── create_pptx.py         # 创建演示文稿
+│   ├── template_manager.py    # 模板管理
+│   ├── analyze_template.py    # 模板分析
+│   ├── config.py              # 配置管理
+│   ├── design_presets.py      # 设计预设
+│   └── content_enhancer.py    # 内容增强
+├── requirements.txt            # Python 依赖
+├── pyproject.toml             # 项目配置
+└── CUSTOM_GPT_INTEGRATION.md  # Custom GPT 集成指南
+```
 
-- `python-pptx` - PowerPoint 操作
-- `markitdown[pptx]` - 文本提取
-- `Pillow` - 图像处理
-- `defusedxml` - XML 解析
+## 🔧 配置
 
----
+创建 `~/.pptx-skill/config.json`:
+
+```json
+{
+  "default_template": "公司品牌",
+  "logo_position": "top_right",
+  "logo_size": 0.8,
+  "log_level": "INFO"
+}
+```
+
+## 🚀 部署
+
+### Docker 部署
+
+```bash
+cd api
+docker build -t pptx-expert .
+docker run -p 8000:8000 pptx-expert
+```
+
+### systemd 部署
+
+```bash
+# 创建服务文件
+sudo systemctl enable ppt-expert-api
+sudo systemctl start ppt-expert-api
+```
+
+### Vercel/Railway
+
+详见 [custom_gpt/DEPLOYMENT.md](custom_gpt/DEPLOYMENT.md)
+
+## 🧪 测试
+
+```bash
+# 健康检查
+curl http://localhost:8000/health
+
+# 创建演示文稿
+curl -X POST http://localhost:8000/presentations/create \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Test","topic":"AI","slides":5}'
+
+# 质量检查
+curl -X POST http://localhost:8000/content/quality-check \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Test","bullets":["point1","point2"]}'
+```
+
+## 📊 版本
+
+当前版本：**v1.0.0**
+
+详见 [RELEASE_NOTES.md](RELEASE_NOTES.md) 和 [Releases](https://github.com/141319co/ppt-expert/releases)
+
+## 🤝 贡献
+
+欢迎贡献！请：
+
+1. Fork 仓库
+2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
+3. 提交更改 (`git commit -m 'Add amazing feature'`)
+4. 推送到分支 (`git push origin feature/amazing-feature`)
+5. 开启 Pull Request
 
 ## 📄 许可
 
-见 LICENSE.txt
+MIT License - 详见 [LICENSE](LICENSE) 文件
+
+## 🙏 致谢
+
+- [python-pptx](https://github.com/scanny/python-pptx)
+- [OpenClaw](https://openclaw.ai)
+- [FastAPI](https://fastapi.tiangolo.com/)
+
+## 📬 联系方式
+
+- GitHub: [@141319co](https://github.com/141319co)
+- Issues: [GitHub Issues](https://github.com/141319co/ppt-expert/issues)
+- API 文档：`/docs` 端点
+
+---
+
+<div align="center">
+
+**Made with ❤️ for better presentations**
+
+[⭐ Star this repo](https://github.com/141319co/ppt-expert) if you find it useful!
+
+</div>

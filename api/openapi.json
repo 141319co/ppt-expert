@@ -1,0 +1,191 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PPTX Expert API",
+    "description": "Enterprise PowerPoint generation API for Custom GPT Actions",
+    "version": "1.0.0",
+    "contact": {
+      "name": "PPTX Expert",
+      "url": "https://github.com/141319co/ppt-expert"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://your-server.com/api",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:8000",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/presentations/create": {
+      "post": {
+        "summary": "Create Presentation",
+        "description": "Create a PowerPoint presentation from outline or topic",
+        "operationId": "createPresentation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Presentation title"
+                  },
+                  "subtitle": {
+                    "type": "string",
+                    "description": "Optional subtitle"
+                  },
+                  "topic": {
+                    "type": "string",
+                    "description": "Topic for auto-generation"
+                  },
+                  "slides": {
+                    "type": "integer",
+                    "default": 5,
+                    "description": "Number of slides"
+                  },
+                  "outline": {
+                    "type": "string",
+                    "description": "Markdown outline"
+                  },
+                  "template_id": {
+                    "type": "string",
+                    "description": "Template ID to use"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Presentation created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean"},
+                    "file": {"type": "string"},
+                    "slides": {"type": "integer"},
+                    "download_url": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/templates/upload": {
+      "post": {
+        "summary": "Upload Template",
+        "description": "Upload and save a PPTX template",
+        "operationId": "uploadTemplate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file"],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "PPTX template file"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Template name"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Template description"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Template saved successfully"
+          }
+        }
+      }
+    },
+    "/templates/list": {
+      "get": {
+        "summary": "List Templates",
+        "description": "List all available templates",
+        "operationId": "listTemplates",
+        "responses": {
+          "200": {
+            "description": "List of templates"
+          }
+        }
+      }
+    },
+    "/content/quality-check": {
+      "post": {
+        "summary": "Quality Check",
+        "description": "Check slide content quality",
+        "operationId": "qualityCheck",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "bullets"],
+                "properties": {
+                  "title": {"type": "string"},
+                  "bullets": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quality check results"
+          }
+        }
+      }
+    },
+    "/content/recommend-layout": {
+      "post": {
+        "summary": "Recommend Layout",
+        "description": "Recommend best layout for content",
+        "operationId": "recommendLayout",
+        "responses": {
+          "200": {
+            "description": "Layout recommendation"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  },
+  "security": [
+    {"ApiKeyAuth": []}
+  ]
+}

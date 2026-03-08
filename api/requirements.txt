@@ -1,0 +1,15 @@
+# API Requirements
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.6
+pydantic>=2.5.0
+
+# PPTX dependencies
+python-pptx>=0.6.21
+Pillow>=10.0.0
+defusedxml>=0.7.1
+markitdown[pptx]>=0.1.0
+
+# Optional: Production
+gunicorn>=21.0.0
+python-dotenv>=1.0.0
