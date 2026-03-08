@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+
+# Templates (don't commit user templates)
+templates/*.pptx
+templates/*.json
+templates/assets/
+
+# Output
+*.pptx
+*.pdf
+output/
+
+# Config
+config.json
+.pptx-skill/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+logs/

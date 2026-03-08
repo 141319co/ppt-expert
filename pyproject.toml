@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pptx-expert"
+version = "1.0.0"
+description = "Enterprise PowerPoint Skill for OpenClaw - Create professional presentations with templates"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "ppt-expert contributors", email = "141319co@github.com"}
+]
+keywords = ["powerpoint", "pptx", "presentations", "openclaw", "templates", "automation"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Graphics :: Presentation",
+    "Topic :: Office/Business",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "python-pptx>=0.6.21",
+    "Pillow>=10.0.0",
+    "defusedxml>=0.7.1",
+    "markitdown[pptx]>=0.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+]
+
+[project.scripts]
+pptx-create = "scripts.create_pptx:main"
+pptx-template = "scripts.template_manager:main"
+pptx-analyze = "scripts.analyze_template:main"
+
+[project.urls]
+Homepage = "https://github.com/141319co/ppt-expert"
+Repository = "https://github.com/141319co/ppt-expert.git"
+Issues = "https://github.com/141319co/ppt-expert/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["scripts*"]
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true

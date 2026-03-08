@@ -1,0 +1,17 @@
+# PPTX Skill Dependencies
+# Core
+python-pptx>=0.6.21
+Pillow>=10.0.0
+defusedxml>=0.7.1
+
+# Text extraction
+markitdown[pptx]>=0.1.0
+
+# Optional: Enhanced features
+# openai>=1.0.0  # AI content generation
+# requests>=2.31.0  # API calls
+
+# Development
+# pytest>=7.0.0  # Testing
+# black>=23.0.0  # Code formatting
+# flake8>=6.0.0  # Linting
