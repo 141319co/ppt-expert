@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Optional, List
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks, Request
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field
 import uvicorn
@@ -47,6 +47,17 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+# Optional API Key auth: if API_KEY env is set, require X-API-Key header to match
+API_KEY = os.environ.get("API_KEY")
+
+@app.middleware("http")
+async def optional_api_key_auth(request: Request, call_next):
+    if API_KEY and request.url.path not in ("/", "/health"):
+        key = request.headers.get("X-API-Key")
+        if key != API_KEY:
+            return JSONResponse(status_code=401, content={"detail": "Invalid or missing API key"})
+    return await call_next(request)
 
 # ============== Models ==============
 

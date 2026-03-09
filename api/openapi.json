@@ -11,7 +11,7 @@
   },
   "servers": [
     {
-      "url": "https://your-server.com/api",
+      "url": "https://qingjingxin.org/playground/ppt-expert-api",
       "description": "Production server"
     },
     {
@@ -163,11 +163,41 @@
         }
       }
     },
+    "/design/presets": {
+      "get": {
+        "summary": "List Design Presets",
+        "description": "Get available design/color presets for presentations",
+        "operationId": "listDesignPresets",
+        "responses": {
+          "200": {
+            "description": "List of design presets"
+          }
+        }
+      }
+    },
     "/content/recommend-layout": {
       "post": {
         "summary": "Recommend Layout",
         "description": "Recommend best layout for content",
         "operationId": "recommendLayout",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "bullets"],
+                "properties": {
+                  "title": {"type": "string"},
+                  "bullets": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Layout recommendation"
