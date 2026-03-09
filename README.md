@@ -2,12 +2,13 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/141319co/ppt-expert/releases)
+[![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/141319co/ppt-expert/releases/tag/v1.0.0)
 
 专业的 PowerPoint 自动化技能，支持完整的模板系统、智能布局推荐和企业级设计预设。
 
 🌐 **API 服务**: 可作为 Custom GPT Actions 使用  
-📖 **文档**: [Custom GPT 集成指南](CUSTOM_GPT_INTEGRATION.md)
+📖 **文档**: [Custom GPT 集成指南](CUSTOM_GPT_INTEGRATION.md)  
+🚀 **演示**: http://qingjingxin.org/playground/ppt-expert-api/docs
 
 ## ✨ 核心功能
 
@@ -26,7 +27,7 @@
 - **RESTful API** - FastAPI 构建
 - **OpenAPI 规范** - 完整的 API 文档
 - **Custom GPT Actions** - 可直接集成到 ChatGPT
-- **Docker 支持** - 一键部署
+- **Nginx 反向代理** - 生产就绪部署
 
 ## 🚀 快速开始
 
@@ -58,10 +59,22 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 # http://localhost:8000/docs
 ```
 
-### 方式 3: Custom GPT
+### 方式 3: 生产部署 (Nginx)
+
+```bash
+# 配置 Nginx 反向代理
+sudo cp nginx/ppt-expert-api.conf /etc/nginx/conf.d/
+sudo nginx -t
+sudo systemctl reload nginx
+
+# 访问 API
+# http://your-domain.com/playground/ppt-expert-api/
+```
+
+### 方式 4: Custom GPT
 
 1. 创建 Custom GPT
-2. 导入 `api/openapi.json` 作为 Actions
+2. 导入 OpenAPI Schema: `http://your-domain.com/playground/ppt-expert-api/openapi.json`
 3. 配置 API 认证
 4. 上传文档到知识库
 
@@ -73,6 +86,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 |------|------|
 | [README.md](README.md) | 使用文档 |
 | [CUSTOM_GPT_INTEGRATION.md](CUSTOM_GPT_INTEGRATION.md) | Custom GPT 集成指南 |
+| [DEPLOYMENT.md](DEPLOYMENT.md) | 部署指南 |
 | [GITHUB_README.md](GITHUB_README.md) | GitHub 项目说明 |
 | [GITHUB_RELEASE.md](GITHUB_RELEASE.md) | Release 说明 |
 | [SKILL.md](SKILL.md) | OpenClaw 技能文档 |
@@ -81,7 +95,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 ### 创建演示文稿
 ```bash
-POST /presentations/create
+POST /playground/ppt-expert-api/presentations/create
 ```
 
 **请求示例**
@@ -100,7 +114,7 @@ POST /presentations/create
   "success": true,
   "file": "ai_trends.pptx",
   "slides": 8,
-  "download_url": "/presentations/download/ai_trends.pptx"
+  "download_url": "/playground/ppt-expert-api/presentations/download/ai_trends.pptx"
 }
 ```
 
@@ -108,12 +122,14 @@ POST /presentations/create
 
 | 端点 | 方法 | 功能 |
 |------|------|------|
-| `/presentations/create` | POST | 创建 PPT |
-| `/templates/list` | GET | 列出模板 |
-| `/content/quality-check` | POST | 质量检查 |
-| `/content/recommend-layout` | POST | 布局推荐 |
-| `/design/presets` | GET | 设计预设 |
-| `/docs` | GET | API 文档 |
+| `/playground/ppt-expert-api/presentations/create` | POST | 创建 PPT |
+| `/playground/ppt-expert-api/templates/list` | GET | 列出模板 |
+| `/playground/ppt-expert-api/content/quality-check` | POST | 质量检查 |
+| `/playground/ppt-expert-api/content/recommend-layout` | POST | 布局推荐 |
+| `/playground/ppt-expert-api/design/presets` | GET | 设计预设 |
+| `/playground/ppt-expert-api/docs` | GET | API 文档 (Swagger UI) |
+| `/playground/ppt-expert-api/openapi.json` | GET | OpenAPI Schema |
+| `/playground/ppt-expert-api/health` | GET | 健康检查 |
 
 ## 🎨 设计预设
 
@@ -140,6 +156,8 @@ ppt-expert/
 ├── custom_gpt/                 # Custom GPT 配置
 │   ├── PPTX_Expert_GPT_Instructions.md
 │   └── DEPLOYMENT.md
+├── nginx/                      # Nginx 配置
+│   └── ppt-expert-api.conf    # 反向代理配置
 ├── scripts/                    # 核心脚本
 │   ├── create_pptx.py         # 创建演示文稿
 │   ├── template_manager.py    # 模板管理
@@ -175,6 +193,19 @@ docker build -t pptx-expert .
 docker run -p 8000:8000 pptx-expert
 ```
 
+### Nginx 反向代理
+
+```bash
+# 复制配置
+sudo cp nginx/ppt-expert-api.conf /etc/nginx/conf.d/
+
+# 测试配置
+sudo nginx -t
+
+# 重载 Nginx
+sudo systemctl reload nginx
+```
+
 ### systemd 部署
 
 ```bash
@@ -208,7 +239,7 @@ curl -X POST http://localhost:8000/content/quality-check \
 
 当前版本：**v1.0.0**
 
-详见 [RELEASE_NOTES.md](RELEASE_NOTES.md) 和 [Releases](https://github.com/141319co/ppt-expert/releases)
+详见 [RELEASE_NOTES.md](RELEASE_NOTES.md) 和 [Releases](https://github.com/141319co/ppt-expert/releases/tag/v1.0.0)
 
 ## 🤝 贡献
 
@@ -234,7 +265,7 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 
 - GitHub: [@141319co](https://github.com/141319co)
 - Issues: [GitHub Issues](https://github.com/141319co/ppt-expert/issues)
-- API 文档：`/docs` 端点
+- API 文档：`/playground/ppt-expert-api/docs` 端点
 
 ---
 
