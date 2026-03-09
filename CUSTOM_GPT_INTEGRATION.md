@@ -1,75 +1,88 @@
-# Custom GPT 集成指南
+# Custom GPT Integration Guide
 
-将 PPTX Expert 接入 ChatGPT Custom GPT，通过 **Actions** 调用 API，用户说「做 PPT/PPTX」时由 GPT 直接调用接口并返回下载链接。
+Connect PPTX Expert to ChatGPT Custom GPT via **Actions**. When users ask to create a PPT/PPTX, the GPT calls the API and returns a download link.
 
 ---
 
-## 加入现有 Custom GPT（你已部署 qingjingxin.org）
+## Add to Your Existing Custom GPT (qingjingxin.org deployment)
 
-你已在 **http://qingjingxin.org/playground/ppt-expert-api/** 部署 API，只需在**现有** Custom GPT 里加一个 Action 并（可选）在 Instructions 里说明用该 Action 做 PPT。
+You have the API deployed at **https://qingjingxin.org/playground/ppt-expert-api/**. Add one Action to your **existing** Custom GPT and optionally update Instructions so the GPT uses it for PPT creation.
 
-### 步骤
+### Steps
 
-1. 打开你的 Custom GPT → **Configure** → **Actions** → **Create new action**。
-2. **Import from URL** 填：
+1. Open your Custom GPT → **Configure** → **Actions** → **Create new action**.
+2. **Import from URL**: paste
    ```
    https://qingjingxin.org/playground/ppt-expert-api/openapi.json
    ```
-3. **Authentication**：
+3. **Authentication**:
    - Type: **API Key**
    - Auth Type: **Custom**
    - Header Name: `X-API-Key`
-   - API Key 填下面「API Key（自用）」里的密钥。
-4. 保存。
-5. 在 **Instructions** 里加一句（或合并进你原有指令）：
-   - 当用户要创建 PPT/PPTX 时，必须调用 **createPresentation** Action，创建成功后给出下载链接：`https://qingjingxin.org/playground/ppt-expert-api` + 返回的 `download_url`。
-   - 需要完整 Instructions 可复制下方「二、Instructions」整段，或与你现有指令合并。
+   - API Key: use the key in the “API Key (self-use)” section below.
+4. Save.
+5. In **Instructions**, add (or merge with your existing instructions):
+   - When the user wants to create a PPT/PPTX, you must call the **createPresentation** Action and, on success, give the download link: `https://qingjingxin.org/playground/ppt-expert-api` + the response `download_url`.
+   - For full Instructions, copy the entire “Section 2: Instructions” block below, or merge it with your current instructions.
 
-### API Key（自用）
+### API Key (self-use)
 
-下面密钥仅用于你在 qingjingxin.org 上的自用部署；请勿泄露或提交到公开仓库。
+The key below is for your own deployment on qingjingxin.org. Do not share it or commit it to a public repo.
 
 ```
 ppt-expert-qjx-8f3e2a1b9c4d5e6f
 ```
 
-- **在 Custom GPT 里**：把上面整串填到 Action 的 API Key 框。
-- **在服务器上（可选）**：在 API 所在目录的 `.env` 中加一行 `API_KEY=ppt-expert-qjx-8f3e2a1b9c4d5e6f`，重启服务后，未带该 Key 的请求会返回 401。若不设置 `API_KEY`，当前 API 不校验密钥（任何人可调）。
+- **In Custom GPT**: Paste the full string above into the Action’s API Key field.
+- **On the server**: Add `API_KEY=ppt-expert-qjx-8f3e2a1b9c4d5e6f` to the `.env` in the API directory (e.g. `/opt/ppt-expert-api` or its `api/` subdir), then run `sudo systemctl restart ppt-expert-api`. Only requests with this key will be accepted; if `API_KEY` is not set, the API does not enforce auth.
+
+### Schema input box is empty?
+
+- **When using “Import from URL”**: ChatGPT fetches the schema and uses it to build the Action, but the JSON often **does not appear in the schema text box**. That is normal. If, after saving, a test like “Help me make a PPT” causes the GPT to call createPresentation, the schema is working.
+- **If import fails (e.g. 404)**: Use **manual paste**. Do not use Import from URL; instead paste the full contents of this repo’s `api/openapi.json` into the Schema input box (from GitHub or your local copy).
 
 ---
 
-## 一、从零创建新 Custom GPT 的步骤
+## Section 1: Create a New Custom GPT from Scratch
 
-### 1. 创建 Custom GPT
+### 1. Create the Custom GPT
 
-1. 打开 https://chat.openai.com/gpts → **Create**。
-2. 在 **Configure** 中填写：
+1. Go to https://chat.openai.com/gpts → **Create**.
+2. Under **Configure**, fill in:
 
-| 字段 | 填写内容 |
-|------|----------|
-| **Name** | `PPTX Expert`（可自拟） |
+| Field | Value |
+|-------|--------|
+| **Name** | `PPTX Expert` (or your choice) |
 | **Description** | `Create professional PowerPoint (PPT/PPTX) from topics, outlines, or templates. Uses API to generate and download files.` |
-| **Instructions** | 见下方「二、Instructions」整段复制进去。 |
+| **Instructions** | Paste the full “Section 2: Instructions” block below. |
 
-### 2. 配置 Actions（必做）
+### 2. Configure Actions (required)
 
-1. **Create new action** → **Import from URL** 填：`https://qingjingxin.org/playground/ppt-expert-api/openapi.json`（本地开发可用 `http://localhost:8000/openapi.json`）。
-2. **Authentication**：Type **API Key**，Auth Type **Custom**，Header Name `X-API-Key`，API Key 使用上文「API Key（自用）」或与服务器 `API_KEY` 一致。
-3. 保存 Action。
+1. **Create new action** → **Import from URL**: `https://qingjingxin.org/playground/ppt-expert-api/openapi.json` (for local dev you can use `http://localhost:8000/openapi.json`).
+2. **Authentication**: Type **API Key**, Auth Type **Custom**, Header Name `X-API-Key`, API Key from the “API Key (self-use)” section above or matching the server’s `API_KEY`.
+3. Save the Action.
 
-### 3. 知识库（可选）
+### 3. Knowledge base (optional)
 
-可上传 `README.md`、`SKILL.md` 等，便于 GPT 理解能力边界。
+You can upload `README.md`, `SKILL.md`, etc., so the GPT understands capabilities and limits.
 
-### 4. 发布
+### 4. Privacy policy (required for publishing)
 
-选择 **Only me** 或 **Anyone with a link**，保存并发布。
+Custom GPT requires a privacy policy URL. Use:
+
+**https://qingjingxin.org/playground/ppt-expert-api/privacy-policy.html**
+
+The page is served by the PPTX Expert API and covers use of the API and Custom GPT.
+
+### 5. Publish
+
+Choose **Only me** or **Anyone with a link**, then save and publish.
 
 ---
 
-## 二、Instructions（复制到 Custom GPT）
+## Section 2: Instructions (paste into Custom GPT)
 
-将下面整段复制到 Custom GPT 的 **Instructions** 框：
+Copy the entire block below into the Custom GPT **Instructions** field:
 
 ```
 You are PPTX Expert, a professional PowerPoint assistant. Your job is to help users create presentations in PPT or PPTX format.
@@ -106,28 +119,28 @@ After createPresentation succeeds, always give the user:
 
 ---
 
-## 三、生产环境与认证
+## Section 3: Production environment and auth
 
-| 项 | 值 |
-|----|-----|
-| **API 根地址** | `https://qingjingxin.org/playground/ppt-expert-api` |
+| Item | Value |
+|------|--------|
+| **API base URL** | `https://qingjingxin.org/playground/ppt-expert-api` |
 | **OpenAPI Schema** | `https://qingjingxin.org/playground/ppt-expert-api/openapi.json` |
-| **认证** | Header `X-API-Key`，值与服务器 PPTX Expert API 的 `API_KEY` 一致。 |
-| **401** | 检查 Custom GPT Action 里填写的 API Key 是否正确。 |
+| **Auth** | Header `X-API-Key`; value must match the server’s PPTX Expert API `API_KEY`. |
+| **401** | Check that the API Key in the Custom GPT Action matches the server. |
 
 ---
 
-## 四、快速自检
+## Section 4: Quick check
 
-在 Custom GPT 中发送：
+In the Custom GPT, send:
 
-- 「帮我做一份关于人工智能的 PPT，8 页。」
+- “Help me make an 8‑slide PPT about artificial intelligence.”
 
-预期：GPT 调用 `createPresentation`，返回文件名、页数和下载链接（`https://qingjingxin.org/playground/ppt-expert-api/presentations/download/...`）。
+Expected: the GPT calls `createPresentation`, then returns the filename, slide count, and download link (`https://qingjingxin.org/playground/ppt-expert-api/presentations/download/...`).
 
 ---
 
-## 参考：架构与 API 摘要
+## Reference: Architecture and API summary
 
 ```
 ChatGPT UI → Custom GPT (Actions) → PPTX Expert API (FastAPI) → Python scripts
@@ -135,29 +148,29 @@ ChatGPT UI → Custom GPT (Actions) → PPTX Expert API (FastAPI) → Python scr
                                  OpenAPI / openapi.json
 ```
 
-| 端点 | 方法 | 用途 |
-|------|------|------|
-| `/presentations/create` | POST | 创建 PPTX（title 必填；topic, slides, outline, template_id 可选） |
-| `/presentations/download/{filename}` | GET | 下载生成的文件 |
-| `/templates/list` | GET | 列出模板 |
-| `/templates/upload` | POST | 上传并保存模板 |
-| `/content/quality-check` | POST | 内容质量检查（title, bullets） |
-| `/content/recommend-layout` | POST | 布局推荐（title, bullets） |
-| `/design/presets` | GET | 设计/配色预设 |
-| `/health` | GET | 健康检查 |
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/presentations/create` | POST | Create PPTX (title required; topic, slides, outline, template_id optional) |
+| `/presentations/download/{filename}` | GET | Download generated file |
+| `/templates/list` | GET | List templates |
+| `/templates/upload` | POST | Upload and save template |
+| `/content/quality-check` | POST | Content quality check (title, bullets) |
+| `/content/recommend-layout` | POST | Layout recommendation (title, bullets) |
+| `/design/presets` | GET | Design/color presets |
+| `/health` | GET | Health check |
 
 ---
 
-## 常见问题
+## FAQ
 
-- **Custom GPT 不调用 Action？** 确认 Instructions 已粘贴、Schema 从上述 URL 导入且无报错。
-- **401 Unauthorized？** 检查 Action 的 API Key 与服务器 `API_KEY` 一致。
-- **API 超时？** 服务器端 Nginx/代理可适当提高 `proxy_read_timeout`。
+- **Custom GPT doesn’t call the Action?** Confirm Instructions are pasted and the schema was imported from the URL without errors.
+- **401 Unauthorized?** Ensure the Action’s API Key matches the server’s `API_KEY`.
+- **API timeout?** Increase `proxy_read_timeout` (and related timeouts) in Nginx or your proxy.
 
 ---
 
-## 资源
+## Resources
 
 - [OpenAI Actions](https://platform.openai.com/docs/actions)
-- [OpenAPI 规范](https://swagger.io/specification/)
-- 项目 API 文档：https://qingjingxin.org/playground/ppt-expert-api/docs
+- [OpenAPI Specification](https://swagger.io/specification/)
+- API docs: https://qingjingxin.org/playground/ppt-expert-api/docs

@@ -51,9 +51,12 @@ app = FastAPI(
 # Optional API Key auth: if API_KEY env is set, require X-API-Key header to match
 API_KEY = os.environ.get("API_KEY")
 
+# Paths that do not require API key (public)
+PUBLIC_PATHS = ("/", "/health", "/privacy-policy.html")
+
 @app.middleware("http")
 async def optional_api_key_auth(request: Request, call_next):
-    if API_KEY and request.url.path not in ("/", "/health"):
+    if API_KEY and request.url.path not in PUBLIC_PATHS:
         key = request.headers.get("X-API-Key")
         if key != API_KEY:
             return JSONResponse(status_code=401, content={"detail": "Invalid or missing API key"})
@@ -101,6 +104,17 @@ async def root():
 async def health_check():
     """Health check endpoint."""
     return {"status": "healthy"}
+
+# Privacy policy (static page for Custom GPT requirement)
+STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+
+@app.get("/privacy-policy.html")
+async def privacy_policy():
+    """Serve privacy policy page."""
+    path = STATIC_DIR / "privacy-policy.html"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Privacy policy not found")
+    return FileResponse(path, media_type="text/html")
 
 @app.post("/presentations/create")
 async def create_presentation(request: CreatePresentationRequest):
