@@ -74,7 +74,8 @@
                     "success": {"type": "boolean"},
                     "file": {"type": "string"},
                     "slides": {"type": "integer"},
-                    "download_url": {"type": "string"}
+                    "download_url": {"type": "string", "description": "Path e.g. /presentations/download/xxx.pptx"},
+                    "download_link": {"type": "string", "description": "Full URL to download the PPTX file; show this to the user"}
                   }
                 }
               }

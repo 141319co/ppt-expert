@@ -52,7 +52,7 @@ app = FastAPI(
 API_KEY = os.environ.get("API_KEY")
 
 # Paths that do not require API key (public)
-PUBLIC_PATHS = ("/", "/health", "/privacy-policy.html")
+PUBLIC_PATHS = ("/", "/health", "/privacy-policy.html", "/playground/ppt-expert-api/privacy-policy.html")
 
 @app.middleware("http")
 async def optional_api_key_auth(request: Request, call_next):
@@ -108,13 +108,21 @@ async def health_check():
 # Privacy policy (static page for Custom GPT requirement)
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
-@app.get("/privacy-policy.html")
-async def privacy_policy():
-    """Serve privacy policy page."""
+def _serve_privacy_policy():
     path = STATIC_DIR / "privacy-policy.html"
     if not path.exists():
         raise HTTPException(status_code=404, detail="Privacy policy not found")
     return FileResponse(path, media_type="text/html")
+
+@app.get("/privacy-policy.html")
+async def privacy_policy():
+    """Serve privacy policy page."""
+    return _serve_privacy_policy()
+
+@app.get("/playground/ppt-expert-api/privacy-policy.html")
+async def privacy_policy_with_prefix():
+    """Serve privacy policy (when Nginx forwards path with prefix)."""
+    return _serve_privacy_policy()
 
 @app.post("/presentations/create")
 async def create_presentation(request: CreatePresentationRequest):
@@ -153,12 +161,16 @@ async def create_presentation(request: CreatePresentationRequest):
         else:
             slide_count = creator.create_default(prs_data, str(output_path))
         
+        base = os.environ.get("PUBLIC_BASE_URL", "https://qingjingxin.org/playground/ppt-expert-api")
+        download_url = f"/presentations/download/{output_name}"
+        download_link = base.rstrip("/") + download_url
         return {
             "success": True,
             "file": output_name,
             "path": str(output_path),
             "slides": slide_count,
-            "download_url": f"/presentations/download/{output_name}"
+            "download_url": download_url,
+            "download_link": download_link,
         }
     
     except Exception as e:
